@@ -10,4 +10,3 @@ Wave Player is a web-based audio player designed specifically for English Langua
 * **Segment Repeat:**  Users can select a portion of the audio waveform and loop it for repeated listening, ideal for practicing pronunciation or focusing on specific phrases.
 * **Online Audio Playback:** Play audio directly from online sources without needing to download the files.
 * **Intuitive Interface:** A simple and user-friendly design makes it easy to use for learners of all levels.
-

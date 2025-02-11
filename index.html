@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
+    <!--
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'"
+    />
+    <meta
+      http-equiv="X-Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'"
+    /> 
+    -->
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <title>Wave Player</title>
+    
+  </head>
+  <body>
+  <h1>Wave Player</h1>
+
+  <div id="info"> </div>
+  <div id="file_panel" class="panel">
+    <div id="open_url_form">
+        <p>  <label for="audio_url">Enter the audio URL:</label> </p>
+        <p>  
+        <input type="url" id="audio_url" required />
+        <button type=submit id="open_url_btn"> Load </button> 
+        </p>
+    </div>
+    <p> or </p>
+    <div id="drop">Drag and drop your own audio file</div>
+  </div>
+
+  <div class="text-overflow-ellipses; panel"> <h2 id="audio_title"></h2> </div>
+
+  <div id="waveform_panel" class="waveform">
+    <!-- the waveform will be rendered here -->
+  </div>
+
+  <div id="option_panel" class="pannel">
+    <!-- Options for player -->
+    <p>
+      <label>
+        <input type="checkbox" id='loop_checkbox' checked="${loop}" />
+        Loop regions
+      </label>
+    </p>
+  <div>
+</body>
+</html>

@@ -1,0 +1,38 @@
+#drop {
+  height: 64px;
+  border: 4px dashed #999;
+  margin: 2em 0;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+#drop.over {
+  border-color: #333;
+}
+
+
+.text-overflow-ellipses {
+  padding: 12px 0;
+  white-space: nowrap;
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 24px;
+  color: darkorange
+}
+
+title, h1{
+  color: darkorange;
+}
+
+.panel {
+  border-left: 5px solid darkorange;
+  padding-left: 10px;
+}
+
+.waveform {
+    width: 100%;
+    background-color:aliceblue
+}

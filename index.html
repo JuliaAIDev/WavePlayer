@@ -15,8 +15,8 @@
     -->
     <link rel="stylesheet" type="text/css" href="style.css">
     <title>Wave Player</title>
-    
   </head>
+
   <body>
   <h1>Wave Player</h1>
 
@@ -25,28 +25,214 @@
     <div id="open_url_form">
         <p>  <label for="audio_url">Enter the audio URL:</label> </p>
         <p>  
-        <input type="url" id="audio_url" required />
-        <button type=submit id="open_url_btn"> Load </button> 
+          <input type="url" id="audio_url" required />
+          <button type=submit id="open_url_btn"> Load </button> 
         </p>
     </div>
     <p> or </p>
     <div id="drop">Drag and drop your own audio file</div>
   </div>
 
-  <div class="text-overflow-ellipses; panel"> <h2 id="audio_title"></h2> </div>
+  <div class="text-overflow-ellipses; panel"> 
+    <h2 id="audio_title"></h2> 
+  </div>
 
   <div id="waveform_panel" class="waveform">
     <!-- the waveform will be rendered here -->
   </div>
 
   <div id="option_panel" class="pannel">
-    <!-- Options for player -->
+    <!-- otions for player -->
     <p>
       <label>
-        <input type="checkbox" id='loop_checkbox' checked="${loop}" />
+        <input type="checkbox" id='loop_checkbox' checked />
         Loop regions
       </label>
     </p>
   <div>
 </body>
+
+<script src="./js/wavesurfer.min.js"></script>
+<script src="./js/regions.min.js"></script>
+<script src="./js/minimap.min.js"> </script>
+<script src="./js/zoom.min.js"> </script>
+<script src="./js/timeline.min.js"></script>
+<script>
+function onReady(){
+
+  let skipSeconds = 15
+  let preservePitch = true
+
+
+  let loop = true
+  // Toggle looping with a checkbox
+  document.getElementById('loop_checkbox').onclick = (e) => {
+    loop = e.target.checked
+  }
+
+  // region plugion
+  const regions =  WaveSurfer.Regions.create()
+
+  // minimap plugin
+  const minimap = WaveSurfer.Minimap.create({
+    height: 50,
+    dragToSeek: true,
+    overlayColor: 'rgba(200, 0, 200, 0.5)',
+    waveColor: 'rgba(100, 100, 100, 0.7)',
+    progressColor: 'rgba(50, 50, 50, 0.7)',
+  })
+
+  const zoom = WaveSurfer.Zoom.create({
+    // the amount of zoom per wheel step, e.g. 0.5 means a 50% magnification per scroll
+    scale: 0.5,
+    maxZoom: 100
+  })
+
+  const ws = WaveSurfer.create({
+    container: "#waveform_panel",
+    minPxPerSec: 100,
+    waveColor: 'rgb(200, 0, 200)',
+    progressColor: 'rgb(100, 0, 100)',
+    plugins: [regions, zoom, minimap, WaveSurfer.Timeline.create()],
+    hideScrollbar: true,
+    url: undefined,
+    autocenter: false,
+    mediaControls: true,
+  })
+
+  // setup regions
+  let active_region = null
+  regions.enableDragSelection({
+    color: 'rgba(255, 0, 0, 0.1)',
+  })
+
+  // only one region
+  regions.on('region-created', (region) => {
+    regions.getRegions().forEach((r) => {
+      if (r.id !== region.id) {
+        r.remove();
+      }
+    });
+    active_region = region
+    active_region.play()
+  });
+
+  // loop region
+  regions.on('region-out', (region) => {
+    if (loop && active_region) { 
+      active_region.play()
+    } 
+  })
+
+
+  /*---- open url ----*/
+  document.getElementById("open_url_btn").onclick = ()=>{
+    url = document.getElementById("audio_url").value
+    ws.load(url)
+      .then(()=>{
+        document.getElementById("audio_title").textContent = url
+      })
+      .catch((e) => {
+        alert("cannot open url: " + url)
+    });    
+  }
+  
+  /*---- Shortcuts ----*/
+  document.addEventListener('keydown', (event) => {
+    // Do nothing if the event was already processed
+    if (event.defaultPrevented) {
+      return; 
+    }
+    
+    switch (event.key) {
+      case "d": // speed down
+        new_speed = ws.getPlaybackRate() - 0.25
+        new_speed = new_speed > 0.25 ? new_speed : 0.25
+        ws.setPlaybackRate(new_speed)
+        break;
+      case "u": // speed up
+        // Do something for "up arrow" key press.
+        new_speed = ws.getPlaybackRate() + 0.25
+        new_speed = new_speed < 2 ? new_speed : 2
+        ws.setPlaybackRate(new_speed)
+        break;
+      case "n": // play at the normal speed
+        ws.setPlaybackRate(1)
+        break;  
+      case "s": // play slowly
+        ws.setPlaybackRate(0.5)
+        break;
+      case "f": // play fast
+        ws.setPlaybackRate(2)
+        break;
+      case " ": // play or pause
+        // Do something for "space" key press.
+        ws.playPause()
+        break; 
+      case "ArrowLeft": // backward
+        ws.skip(0-skipSeconds)
+        break;
+      case "ArrowRight": // forward
+        // Do something for "right arrow" key press.
+        ws.skip(skipSeconds)
+        break;
+      case "Enter":
+        // Do something for "enter" or "return" key press.
+        break;
+      
+      case "Delete":
+        active_region = null
+        regions.clearRegions()
+        break;
+      case "Escape":
+        // Do something for "esc" key press.
+        active_region = null
+        break;
+
+      default:
+        return; // Quit when this doesn't handle the key event.
+    }
+
+    // Cancel the default action to avoid it being handled twice
+    event.preventDefault();
+
+  });
+
+
+
+  /*---- Drag'n'drop -----*/
+  document.body.ondrop = (e) => {
+    e.preventDefault()
+  }
+  const dropArea = document.querySelector('#drop')
+  dropArea.ondragenter = (e) => {
+    e.preventDefault()
+    e.target.classList.add('over')
+  }
+  dropArea.ondragleave = (e) => {
+    e.preventDefault()
+    e.target.classList.remove('over')
+  }
+  dropArea.ondragover = (e) => {
+    e.preventDefault()
+  }
+  dropArea.ondrop = (e) => {
+    e.preventDefault()
+    e.target.classList.remove('over')
+
+    // Read the audio file
+    const reader = new FileReader()
+    reader.onload = (event) => {
+      ws.load(event.target.result)
+    }
+    reader.readAsDataURL(e.dataTransfer.files[0])
+    document.getElementById("audio_title").textContent = e.dataTransfer.files[0].name
+    ws.empty()
+  }
+  
+}
+  
+document.addEventListener("DOMContentLoaded", onReady)
+
+</script>
 </html>

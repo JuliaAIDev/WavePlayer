@@ -29,14 +29,24 @@ Wave Player is a web-based audio player designed specifically for English Langua
 **Quick Install**
 * Download the project.
 * Open index.html in your browser.
+This version cannot open the audio from the CROS disable site
+
+**Windows**
+* Download the .zip from the release page 
+
+**Tech**
+- Use Electron to package and publish
+- env-cmd
 
 **TODO**
-- [ ] Electron app
+- [x] Electron app
 - [x] overlay the loading spinner during loading 
 - [x] directly drop to the player
+- [ ] url parser for audio from npr.org
 
 **Issues**
 * Cannot open audio from a web site that does not allows a web page to access resources from a different domain than the one that served the page, i.e. Cross-origin resource sharing (CORS).
+
 
 **Demo**
 

@@ -1,0 +1,39 @@
+{
+  "name": "waveplayer",
+  "version": "1.0.0",
+  "description": "Wave Player for language learners",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron-forge start",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "package": "electron-forge package",
+    "make": "electron-forge make",
+    "publish": "env-cmd electron-forge publish"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JuliaAIDev/WavePlayer.git"
+  },
+  "author": "Julia C",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/JuliaAIDev/WavePlayer/issues"
+  },
+  "homepage": "https://github.com/JuliaAIDev/WavePlayer#readme",
+  "devDependencies": {
+    "@electron-forge/cli": "^7.6.1",
+    "@electron-forge/maker-deb": "^7.6.1",
+    "@electron-forge/maker-rpm": "^7.6.1",
+    "@electron-forge/maker-squirrel": "^7.6.1",
+    "@electron-forge/maker-zip": "^7.6.1",
+    "@electron-forge/plugin-auto-unpack-natives": "^7.6.1",
+    "@electron-forge/plugin-fuses": "^7.6.1",
+    "@electron-forge/publisher-github": "^7.6.1",
+    "@electron/fuses": "^1.8.0",
+    "electron": "^34.1.1"
+  },
+  "dependencies": {
+    "electron-squirrel-startup": "^1.0.1",
+    "env-cmd": "^10.1.0"
+  }
+}

@@ -28,7 +28,8 @@ Wave Player is a web-based audio player designed specifically for English Langua
 
 **TODO**
 - [ ] Electron app
-- [ ] directly drop to the player
+- [ ] overlay the loading spinner during loading 
+- [x] directly drop to the player
 
 **Issues**
 * Cannot open audio from a web site that does not allows a web page to access resources from a different domain than the one that served the page, i.e. Cross-origin resource sharing (CORS).

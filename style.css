@@ -1,23 +1,27 @@
 title, h1{
-  color: darkorange;
+  color:rgb(200, 0, 200);
+}
+
+button{
+  font-size: 16px;
 }
 
 #audio_url {
-  width: 75%  
+  width: 75%;
+  font-size: 16px;
 }
 
 #drop {
-  height: 64px;
-  border: 4px dashed #999;
   margin: 2em 0;
   text-align: center;
   display: flex;
   flex-direction: column;
   justify-content: center;
+  height: max-content;
 }
 
-#drop.over {
-  border-color: #333;
+.over {
+  border: 4px dashed #333;
 }
 
 .text-overflow-ellipses {
@@ -26,16 +30,32 @@ title, h1{
   width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
-  font-size: 24px;
-  color: darkorange
+  font-size: 16px;
+  font-weight: bold;
 }
 
 .panel {
-  border-left: 5px solid darkorange;
+  border-left: 5px solid rgb(200, 0, 200);
   padding-left: 10px;
 }
 
 .waveform {
     width: 100%;
     background-color:rgb(240, 248, 255)
+}
+
+
+.loader {
+  -webkit-animation: spin 2s linear infinite;
+  animation: spin 2s linear infinite;
+}
+
+@-webkit-keyframes spin {
+  0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }

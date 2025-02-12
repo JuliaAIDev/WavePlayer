@@ -29,26 +29,27 @@
           <button type=submit id="open_url_btn"> Load </button> 
         </p>
     </div>
-    <p> or </p>
-    <div id="drop">Drag and drop your own audio file</div>
+    <p> or drag and drop your own audio file </p>
+      
   </div>
+  
+  <div class="text-overflow-ellipses panel"> Title: <span id="audio_title"></span></div>
 
-  <div class="text-overflow-ellipses; panel"> 
-    <h2 id="audio_title"></h2> 
-  </div>
-
-  <div id="waveform_panel" class="waveform">
+  <div id="drop" class="panel"> 
+    <div id="waveform_panel" class="waveform">
     <!-- the waveform will be rendered here -->
+    </div>
   </div>
 
-  <div id="option_panel" class="pannel">
-    <!-- otions for player -->
+  
+  <div id="option_panel" class="panel">
+    <!-- options for player -->
     <p>
       <label>
         <input type="checkbox" id='loop_checkbox' checked />
         Loop regions
       </label>
-    </p>
+    </p>  
   <div>
 
 </body>
@@ -65,6 +66,7 @@ function onReady(){
   let skipSeconds = 15
   let preservePitch = true
   let loop = true
+
   // Toggle looping with a checkbox
   document.getElementById('loop_checkbox').onclick = (e) => {
     loop = e.target.checked
@@ -124,16 +126,24 @@ function onReady(){
     } 
   })
   
+  ws.on("decode", ()=>{
+    console.log("decode")
+    ws.stop()
+    regions.clearRegions()
+    active_region = null
+    
+  })
+
   /*---- open url ----*/
   document.getElementById("open_url_btn").onclick = ()=>{
-    url = document.getElementById("audio_url").value  
+    url = document.getElementById("audio_url").value
     ws.load(url)
-      .then(()=>{
+      .then(() => {
         document.getElementById("audio_title").textContent = url
       })
       .catch((e) => {
         alert("cannot open url: " + url)
-    });    
+      });    
   }
   
   /*---- Shortcuts ----*/
@@ -201,6 +211,7 @@ function onReady(){
   document.body.ondrop = (e) => {
     e.preventDefault()
   }
+  // const dropArea = document.getElementById("#waveform_panel")
   const dropArea = document.querySelector('#drop')
   dropArea.ondragenter = (e) => {
     e.preventDefault()
@@ -217,14 +228,19 @@ function onReady(){
     e.preventDefault()
     e.target.classList.remove('over')
 
+    filename = e.dataTransfer.files[0].name
+
     // Read the audio file
     const reader = new FileReader()
     reader.onload = (event) => {
-      ws.load(event.target.result)
+      ws.load(event.target.result).then(() => {
+        document.getElementById("audio_title").textContent = filename
+      })
+      .catch((e) => {
+        alert("cannot open file: " + filename)
+      });   
     }
     reader.readAsDataURL(e.dataTransfer.files[0])
-    document.getElementById("audio_title").textContent = e.dataTransfer.files[0].name
-    ws.empty()
   }
   
 }

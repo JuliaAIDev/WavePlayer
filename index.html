@@ -36,7 +36,7 @@
   <div class="text-overflow-ellipses panel"> Title: <span id="audio_title"></span></div>
 
   <div id="drop" class="panel"> 
-    <div id="waveform_panel" class="waveform">
+    <div id="waveform_panel" class="waveform" tabindex="-1">
     <!-- the waveform will be rendered here -->
     </div>
     <div class="loading-overlay" id="loadingOverlay">
@@ -122,6 +122,11 @@ function onReady(){
     active_region = region
     active_region.play()
   });
+
+  regions.on('region-in', (region) => {
+    console.log("region-in")
+    active_region = region
+  })
 
   // loop region
   regions.on('region-out', (region) => {

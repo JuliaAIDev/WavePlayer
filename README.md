@@ -4,8 +4,7 @@
 
 Wave Player is a web-based audio player designed specifically for English Language Learning. It features a visual waveform representation of the audio, allowing users to easily select and repeat specific segments for focused study.  It also supports direct playback of online audio without requiring downloads.
 
-<video poster="./assets/snapshot.png" src='./assets/demo.mp4'> </video>
-
+[![demo](./assets/snapshot.png)](./assets/demo.mp4)
 
 **Features:**
 

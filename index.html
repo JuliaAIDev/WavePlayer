@@ -39,6 +39,9 @@
     <div id="waveform_panel" class="waveform">
     <!-- the waveform will be rendered here -->
     </div>
+    <div class="loading-overlay" id="loadingOverlay">
+      <div class="spinner"></div>
+    </div>
   </div>
 
   
@@ -66,6 +69,7 @@ function onReady(){
   let skipSeconds = 15
   let preservePitch = true
   let loop = true
+  let loadingOverlayElem = document.getElementById("loadingOverlay") 
 
   // Toggle looping with a checkbox
   document.getElementById('loop_checkbox').onclick = (e) => {
@@ -127,23 +131,27 @@ function onReady(){
   })
   
   ws.on("decode", ()=>{
-    console.log("decode")
+    // console.log("decode")
     ws.stop()
     regions.clearRegions()
     active_region = null
-    
   })
 
   /*---- open url ----*/
   document.getElementById("open_url_btn").onclick = ()=>{
     url = document.getElementById("audio_url").value
+    loadingOverlayElem.style.visibility = "visible"
     ws.load(url)
       .then(() => {
         document.getElementById("audio_title").textContent = url
       })
       .catch((e) => {
         alert("cannot open url: " + url)
-      });    
+      })
+      .finally((e)=> {
+        loadingOverlayElem.style.visibility = "hidden"
+      })
+ 
   }
   
   /*---- Shortcuts ----*/
@@ -229,16 +237,20 @@ function onReady(){
     e.target.classList.remove('over')
 
     filename = e.dataTransfer.files[0].name
-
+  
     // Read the audio file
     const reader = new FileReader()
     reader.onload = (event) => {
+      loadingOverlayElem.style.visibility = "visible"
       ws.load(event.target.result).then(() => {
         document.getElementById("audio_title").textContent = filename
       })
       .catch((e) => {
         alert("cannot open file: " + filename)
-      });   
+      })
+      .finally((e)=> {
+        loadingOverlayElem.style.visibility = "hidden"
+      })   
     }
     reader.readAsDataURL(e.dataTransfer.files[0])
   }

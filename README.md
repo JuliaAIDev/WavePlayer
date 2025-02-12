@@ -28,7 +28,7 @@ Wave Player is a web-based audio player designed specifically for English Langua
 
 **TODO**
 - [ ] Electron app
-- [ ] overlay the loading spinner during loading 
+- [x] overlay the loading spinner during loading 
 - [x] directly drop to the player
 
 **Issues**

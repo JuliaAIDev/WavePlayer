@@ -43,6 +43,7 @@ This version cannot open the audio from the CROS disable site
 - [x] overlay the loading spinner during loading 
 - [x] directly drop to the player
 - [ ] url parser for audio from npr.org
+- [ ] Wavesurfer -> peaks 
 
 **Issues**
 * Cannot open audio from a web site that does not allows a web page to access resources from a different domain than the one that served the page, i.e. Cross-origin resource sharing (CORS).

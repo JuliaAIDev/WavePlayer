@@ -13,12 +13,29 @@
       content="default-src 'self'; script-src 'self'"
     /> 
     -->
+    <!--- quil for text editor-->
     <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
+
+    <!--- wavesurfer  --->
+    <script src="https://cdn.jsdelivr.net/npm/wavesurfer.js@7/dist/wavesurfer.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/wavesurfer.js@7/dist/plugins/regions.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/wavesurfer.js@7/dist/plugins/minimap.min.js"> </script>
+    <script src="https://cdn.jsdelivr.net/npm/wavesurfer.js@7/dist/plugins/zoom.min.js"> </script>
+    <script src="https://cdn.jsdelivr.net/npm/wavesurfer.js@7/dist/plugins/timeline.min.js"></script>
+
+    <!--- media control--->
+    <script type="module" src="https://cdn.jsdelivr.net/npm/media-chrome@4/+esm"></script>
+
+    <!--- icon--->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20,100,1,200&icon_names=favorite,home,search,settings"/>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=laps,repeat,repeat_on" />
     <link rel="stylesheet" type="text/css" href="style.css">
     <title>Wave Player</title>
   </head>
 
   <body>
+
   <h1>Wave Player</h1>
 
   <div id="info"> </div>
@@ -31,43 +48,66 @@
         </p>
     </div>
     <p> or drag and drop your own audio file </p>
-      
   </div>
   
-  <div class="panel"> Title: <span id="audio_title" class="text-overflow-ellipses"></span></div>
+  <div class="panel"> Title: <span id="audio_title" class="text-overflow-ellipses">audio.wav</span></div>
 
-  <div id="drop" class="panel" tabindex="-1"> 
-    <div id="waveform_panel" class="waveform" tabindex="-1">
+  <div id="main_view" class="panel"> <div id="drop"> 
+    
+    <div id="waveform_panel" class="waveform">
     <!-- the waveform will be rendered here -->
     </div>
-    <div class="loading-overlay" id="loadingOverlay">
-      <div class="spinner"></div>
-    </div>
-  </div>
+    <media-controller audio>
+        <audio id="audio"
+          slot="media"
+          src="https://stream.mux.com/O4h5z00885HEucNNa1rV02wZapcGp01FXXoJd35AHmGX7g/audio.m4a""
+        ></audio>
+        <media-control-bar keysused="nospace">
+          <media-seek-backward-button seekoffset="15" keysused="nospace"></media-seek-backward-button>
+          <media-play-button keysused="nospace"></media-play-button>
+          <media-seek-forward-button seekoffset="15" keysused="nospace"></media-seek-forward-button>
+          <media-time-display keysused="nospace"></media-time-display>
+          <media-time-range keysused="nospace"></media-time-range>
+          <media-duration-display keysused="nospace"></media-duration-display>
+          <media-mute-button keysused="nospace"></media-mute-button>
+          <media-volume-range keysused="nospace"></media-volume-range>
+          <media-playback-rate-button rates="0.25 0.5 0.75 1.0 1.25 1.5 1.75 2" keysused="nospace"></media-playback-rate-button>
+        
+          <label class="toggle_checkbox">
+            <input id="loop_region_checkbox" type="checkbox" checked/><span class="material-symbols-rounded switch_color">repeat</span>
+          </label>
+          <label class="toggle_checkbox">
+            <input id="loop_whole_checkbox" type="checkbox" /> <span class="material-symbols-rounded switch_color">laps</span>
+          </label>
+        </media-control-bar>
+    </media-controller>  
+  </div></div>
 
-  
   <div id="option_panel" class="panel">
     <!-- options for player -->
     <p>
       <label>
         <input type="checkbox" id='loop_checkbox' checked />
-        Loop regions
+        loop 
       </label>
     </p>  
   </div>
+  
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="spinner"></div>
+  </div>
+
+
   <!-- Create the editor container -->
   <div id="editor">
    
   </div>
 </body>
 
-<script src="./js/wavesurfer.min.js"></script>
-<script src="./js/regions.min.js"></script>
-<script src="./js/minimap.min.js"> </script>
-<script src="./js/zoom.min.js"> </script>
-<script src="./js/timeline.min.js"></script>
 
-<script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
+
+
+
 <script>
 const quill = new Quill('#editor', {
   theme: 'snow',
@@ -75,20 +115,26 @@ const quill = new Quill('#editor', {
 });
 
 function onReady(){
+  const mc = document.querySelector('media-controller');
+  mc.hotkeys.add('noarrowleft', 'noarrowright', 'nospace', 'nof');
+
   let skipSeconds = 15
   let preservePitch = true
-  let loop = true
+  let loop_region = true
+  let loop_whole = false
   let loadingOverlayElem = document.getElementById("loadingOverlay") 
 
   // Toggle looping with a checkbox
-  document.getElementById('loop_checkbox').onclick = (e) => {
-    loop = e.target.checked
+  document.getElementById('loop_region_checkbox').onclick = (e) => {
+    loop_region = e.target.checked
   }
 
-
+  document.getElementById('loop_whole_checkbox').onclick = (e) => {
+    loop_whole = e.target.checked
+  }
 
   // region plugion
-  const regions =  WaveSurfer.Regions.create()
+  const regions =  WaveSurfer.Regions.create({minLength:2})
 
   // minimap plugin
   const minimap = WaveSurfer.Minimap.create({
@@ -112,9 +158,10 @@ function onReady(){
     progressColor: 'rgb(100, 0, 100)',
     plugins: [regions, zoom, minimap, WaveSurfer.Timeline.create()],
     hideScrollbar: true,
-    url: undefined,
+    media: document.getElementById('audio'),
     autocenter: false,
-    mediaControls: true,
+    mediaControls: false,
+    dragToSeek: false,
   })
 
   // setup regions
@@ -131,7 +178,6 @@ function onReady(){
       }
     });
     active_region = region
-    active_region.play()
   });
 
   regions.on('region-in', (region) => {
@@ -141,7 +187,7 @@ function onReady(){
 
   // loop region
   regions.on('region-out', (region) => {
-    if (loop && active_region) { 
+    if (loop_region && active_region) { 
       active_region.play()
     } 
   })
@@ -153,6 +199,12 @@ function onReady(){
     active_region = null
   })
 
+  ws.on("finish", ()=>{
+    // console.log("decode")
+    if (loop_whole){
+      ws.play()
+    }
+  })
   /*---- open url ----*/
   document.getElementById("open_url_btn").onclick = ()=>{
     url = document.getElementById("audio_url").value
@@ -170,13 +222,18 @@ function onReady(){
  
   }
   
-  /*---- Shortcuts ----*/
-  document.addEventListener('keydown', (event) => {
+  // /*---- Shortcuts ----*/
+  document.addEventListener('keyup', (event) => {
+    
     // Do nothing if the event was already processed
     if (event.defaultPrevented) {
       return; 
     }
     
+    // Do nothing if the event is not fired by document
+    if (event.target.tagName != "BODY"){
+      return;
+    }
     switch (event.key) {
       case "d": // speed down
         new_speed = ws.getPlaybackRate() - 0.25
@@ -227,7 +284,7 @@ function onReady(){
     }
 
     // Cancel the default action to avoid it being handled twice
-    event.preventDefault();
+    event.stopPropagation();
 
   });
 
@@ -274,6 +331,5 @@ function onReady(){
 }
   
 document.addEventListener("DOMContentLoaded", onReady)
-
 </script>
 </html>

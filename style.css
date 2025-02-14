@@ -44,6 +44,9 @@ button{
     background-color:rgb(240, 248, 255)
 }
 
+.waveform ::part(minimap) {
+  background-color: rgb(229 235 241);
+} 
 
 
 .loading-overlay {
@@ -76,4 +79,39 @@ button{
 #editor{
   height: 500px;
   border: 1px solid gray;
+}
+
+:focus {
+  border: 1px solid rgb(232, 156, 255);
+  padding: 10px;
+}
+
+media-controller {
+  --media-primary-color: rgb(200, 0, 200);
+  --media-secondary-color: #333; 
+  --media-control-hover-background: rgb(128 0 0 / 0.85);
+  --media-control-background-color:  var(--media-secondary-color);
+  background-color: var(--media-secondary-color);
+}
+
+.toggle_checkbox{
+  vertical-align: middle;
+  display: inline-block;
+  padding: var(--media-control-padding, 10px);
+  cursor: pointer;
+}
+
+.toggle_checkbox input{
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.switch_color{
+  vertical-align: middle;
+}
+
+input:checked + .switch_color{
+  color: var(--media-secondary-color);
+  background-color: var(--media-primary-color);
 }
